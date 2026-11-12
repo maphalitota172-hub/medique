@@ -4,7 +4,7 @@ This integration anchors the SHA-256 hashes of the existing MediQueue local audi
 
 ## Privacy and design
 
-- MySQL remains the application database.
+- Turso (libSQL) is the application database.
 - MediQueue's existing local audit chain remains the source of event details.
 - Ethereum stores only a block hash, local block index, event type and transaction metadata.
 - Do not put patient names, phone numbers, prescriptions, diagnoses, passwords, JWTs or other personal/health information on Ethereum.
@@ -37,7 +37,7 @@ The deployer wallet is the contract owner. Use that same wallet when anchoring b
 ## C. Configure MediQueue
 
 1. In the MediQueue project root, create `.env` by copying `.env.example`.
-2. Set your actual MySQL password and a long random `JWT_SECRET`.
+2. Set `TURSO_DATABASE_URL`, `TURSO_AUTH_TOKEN`, and a long random `JWT_SECRET` in `.env`.
 3. Replace `VITE_ETHEREUM_CONTRACT_ADDRESS` with the deployed contract address, for example `0x...`.
 4. Keep `VITE_ETHEREUM_CHAIN_ID=11155111`.
 5. Stop and restart Vite after editing `.env`; Vite only reads these variables when it starts.

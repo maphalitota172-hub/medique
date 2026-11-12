@@ -20,6 +20,7 @@ React + Vite frontend, Express API and Turso (libSQL) database.
    ```
 
 Open `http://localhost:5173`. The API runs at `http://localhost:5000`; check `http://localhost:5000/api/health` for database connectivity. Vite proxies local `/api` requests to the API.
+The API root (`/`) identifies the service; the frontend is hosted separately on Vercel.
 
 ## Deploy frontend to Vercel and API to Render
 
@@ -68,24 +69,9 @@ with header `Authorization: Bearer YOUR_ADMIN_TOKEN` and JSON body:
 ```
 Use `pharmacist` or `admin` for the role when appropriate.
 
-## Database tables and what they store
+## Database
 
-| Table | Purpose |
-|---|---|
-| `roles` | Available application roles and descriptions |
-| `users` | Patient and staff accounts, password hashes and role assignment |
-| `patients` | Patient number linked to a patient login |
-| `facilities` | Hospital/clinic names, towns and staffing count |
-| `services` | Queue service types |
-| `queue_tickets` | Patient queue bookings, facility, service, ticket number and status |
-| `medicines` | Medicine catalogue |
-| `medicine_stock` | Quantity of each medicine at each facility |
-| `medicine_watchlist` | Medicines/facilities a patient follows |
-| `notifications` | In-app notifications for each user |
-| `audit_logs` | Records staff actions for accountability |
-| `app_state` | Temporary compatibility table used by the existing prototype's shared-state store |
-
-The first nine tables are the recommended relational design for the full system. The current app still uses `app_state` for most queue/stock screens so that existing features are not broken. Authentication is stored separately in `users`. A next development step is migrating each screen's read/write operations from the JSON `app_state` document into the matching relational tables.
+The backend connects to Turso using `TURSO_DATABASE_URL` and `TURSO_AUTH_TOKEN`. The schema is defined in `database.turso.sql` and applied with `npm run migrate:turso`. Authentication uses the `users` and `roles` tables; the prototype's queue and stock screens currently synchronize through a shared `app_state` JSON document.
 
 ## Important prototype limitation
 

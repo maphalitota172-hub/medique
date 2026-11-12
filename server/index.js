@@ -68,6 +68,13 @@ if (!JWT_SECRET) {
   throw new Error('Set JWT_SECRET in your .env file.')
 }
 
+app.get('/', (_req, res) => {
+  res.json({
+    name: 'MediQueue API',
+    health: '/api/health'
+  })
+})
+
 const sign = user => jwt.sign(
   {
     id: user.id,
