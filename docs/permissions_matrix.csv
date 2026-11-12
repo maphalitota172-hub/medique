@@ -1,0 +1,7 @@
+Module,patient,clerk,pharmacist,admin
+"Book and track own queue ticket","write","none","none","none"
+"Queue desk (call, complete, no-show)","none","write","read","read"
+"Medicine stock","read","read","write","read"
+"Blockchain ledger","none","read","read","write"
+"AI insights (write = retrain)","none","read","read","write"
+"Security configuration","none","none","none","write"

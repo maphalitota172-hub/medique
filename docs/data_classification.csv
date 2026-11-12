@@ -1,0 +1,12 @@
+Data item,Class,Where it appears,Controls
+"Facility names, towns and services","public","Facility lists","None needed; integrity checked on release"
+"Medicine availability status per facility (In stock, Low, Out)","public","Medicines tab","Status only; exact quantities hidden from patients"
+"Queue length and estimated wait (no identities)","public","Booking form, Medicines tab","Aggregated counts only"
+"Patient name and phone number","private","Profile, queue ticket","Consent, role-based access, retention limit, erasure on request"
+"Queue ticket linked to a person","private","Queue desk, My tickets","Only the owner and queue clerks can see identity"
+"Medicine watch list (which medicine a patient follows)","confidential","Stock notifications","Owner-only; can imply a health condition"
+"Staff accounts and role assignments","confidential","Security module","Admin only"
+"Blockchain ledger entries (pseudonymous hashes)","confidential","Local Ledger tab and Ethereum Sepolia","Only SHA-256 block hashes and limited event metadata are anchored; never publish direct identifiers or health information"
+"Chronic care service type on a ticket (e.g. HIV care)","restricted","Queue ticket","Special-category health data; visible only to queue clerks, never written to the chain"
+"Permission matrix and security settings","restricted","Security module","Admin write, changes logged to the ledger"
+"AI training datasets","private","Insights","Synthetic or aggregated; no personal records"

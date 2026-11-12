@@ -1,0 +1,13 @@
+Requirement,Level,Evidence
+"Art. 5(1)(c) Data minimisation","Compliant","Only name and phone are collected; no ID numbers or addresses."
+"Art. 6 and 7 Lawful basis and consent","Compliant","Explicit consent checkbox before profile creation (configurable)."
+"Art. 5(1)(e) Storage limitation","Compliant","Finished tickets are purged after the configured retention period."
+"Art. 15 and 20 Access and portability","Compliant","""Download my data"" exports profile, tickets, watch list and notices as JSON."
+"Art. 17 Right to erasure","Partial","Off-chain data can be erased; hashes anchored on Ethereum Sepolia are public and cannot be deleted, so no personal or health data may be anchored."
+"Art. 25 Privacy by design","Compliant","Pseudonymised ledger, role-based access, restricted classes hidden by default."
+"Art. 9 Special category (health) data","Partial","Classified as restricted, but stored unencrypted in browser storage in this prototype."
+"Art. 13 Transparency","Partial","Short consent text only; a full privacy notice is still needed."
+"Art. 30 Records of processing","Partial","The classification register covers data items; processing purposes not yet documented."
+"Art. 32 Security of processing","Partial","RBAC and tamper-evident ledger exist; real authentication, TLS and encryption at rest are not built."
+"Art. 33 Breach notification","Gap","No incident response or 72-hour notification procedure."
+"Art. 35 Data protection impact assessment","Gap","No DPIA completed for health data processing."

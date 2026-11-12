@@ -1,0 +1,119 @@
+# MediQueue Lesotho
+
+React + Vite frontend, Express API and MySQL database.
+
+## 1. Create the MySQL database
+
+1. Open MySQL Workbench.
+2. Open `database.sql`.
+3. Click the lightning bolt to execute the whole script.
+4. Confirm that the `mediqueue_lesotho` schema and tables have been created.
+
+## 2. Configure the project
+
+In the project root, copy `.env.example` and name the copy `.env`.
+Edit the values:
+- `DB_PASSWORD`: your actual MySQL password.
+- `JWT_SECRET`: replace with a long random secret.
+- `ADMIN_PASSWORD`: choose a strong password for your first administrator.
+
+Never upload or share `.env`.
+
+## 3. Install and create the first administrator
+
+Open a terminal in the project folder and run:
+
+```bash
+npm install
+npm run create-admin
+```
+
+This creates (or resets) the administrator account using the `ADMIN_*` values in `.env`.
+Remove or change those bootstrap values after setup. Do not use the example password.
+
+## 4. Start the app
+
+```bash
+npm run dev:all
+```
+
+Open `http://localhost:5173`. The API runs at `http://localhost:5000`.
+Check `http://localhost:5000/api/health` for the MySQL connection.
+
+## Authentication included
+
+- Patients can register using their name, email, phone and password.
+- Passwords are hashed with bcrypt; plain passwords are not stored.
+- Login returns an 8-hour signed JWT.
+- The API checks the token on protected endpoints.
+- New public registrations are always assigned the `patient` role.
+- Staff accounts (clerk, pharmacist, admin) are created by an administrator through the protected staff-account API.
+- Sign out removes the browser's token.
+
+To create staff accounts, sign in as admin and use an API client such as Postman:
+`POST http://localhost:5000/api/auth/create-staff`
+with header `Authorization: Bearer YOUR_ADMIN_TOKEN` and JSON body:
+```json
+{
+  "fullName": "Queue Clerk",
+  "email": "clerk@hospital.ls",
+  "phone": "50000000",
+  "password": "ChangeMe123!",
+  "role": "clerk"
+}
+```
+Use `pharmacist` or `admin` for the role when appropriate.
+
+## MySQL tables and what they store
+
+| Table | Purpose |
+|---|---|
+| `roles` | Available application roles and descriptions |
+| `users` | Patient and staff accounts, password hashes and role assignment |
+| `patients` | Patient number linked to a patient login |
+| `facilities` | Hospital/clinic names, towns and staffing count |
+| `services` | Queue service types |
+| `queue_tickets` | Patient queue bookings, facility, service, ticket number and status |
+| `medicines` | Medicine catalogue |
+| `medicine_stock` | Quantity of each medicine at each facility |
+| `medicine_watchlist` | Medicines/facilities a patient follows |
+| `notifications` | In-app notifications for each user |
+| `audit_logs` | Records staff actions for accountability |
+| `app_state` | Temporary compatibility table used by the existing prototype's shared-state store |
+
+The first nine tables are the recommended relational design for the full system. The current app still uses `app_state` for most queue/stock screens so that existing features are not broken. Authentication is stored separately in `users`. A next development step is migrating each screen's read/write operations from the JSON `app_state` document into the matching relational tables.
+
+## Important prototype limitation
+
+This adds real account registration and login, password hashing and token checks. However, the existing application data screens still share one `app_state` JSON document; this is not yet a fully multi-patient production system. Before using real patient information, migrate queue, stock, watchlist and notifications to the relational tables, enforce ownership and role permissions on every API route, add HTTPS, backups, audit review and appropriate health-data protection. Do not enter real patient/medical information in this coursework prototype.
+
+
+## Ethereum Sepolia blockchain integration
+
+The existing local audit chain remains in MediQueue and continues to record queue, stock and other application events. The upgraded project can anchor the SHA-256 hash of each local block on the public **Ethereum Sepolia test network**.
+
+- `contracts/MediQueueAnchor.sol` is the Solidity smart contract.
+- `src/lib/ethereum.js` connects MetaMask to Sepolia using Ethers.js.
+- The Admin Dashboard's Ledger tab can connect the deploying administrator wallet, check which local block hashes are already anchored, and submit up to 10 pending hashes per Ethereum transaction.
+- The contract records only block hashes, local block indexes and limited event types. Patient names, phone numbers, prescriptions, diagnoses, passwords and other sensitive information must remain off-chain.
+- The wallet that deploys the contract becomes its owner. Use that same MetaMask account when anchoring blocks.
+- Sepolia ETH is test currency. This project does not use Bitcoin, does not issue a token and does not require real ETH.
+
+Follow `docs/ETHEREUM_SEPOLIA_SETUP.md` to install MetaMask, deploy the contract with Remix, configure `VITE_ETHEREUM_CONTRACT_ADDRESS`, and test the integration. Restart Vite after changing `.env`.
+
+### Local audit chain
+
+The local educational audit chain uses SHA-256 hashing, a transaction Merkle root, nonce mining and previous-block links. The **Verify local chain** button checks the integrity of this local history. Ethereum anchoring is a separate independent testnet record of each block hash.
+
+### AI and Insights
+The browser trains two models from the CSV training files:
+- `public/data/queue_wait.csv` trains the queue waiting-time regression model.
+- `public/data/stock_levels.csv` trains the stock-out classification model.
+
+The Insights screen combines those trained models with live application state:
+- queue counts, ticket statuses, services, facility and current time are read from the bookings made in MediQueue;
+- medicine quantities are read from the pharmacist's current stock records;
+- stock update timestamps are recorded when stock is changed;
+- the matching medicine's historical dispensing rate is calculated from `stock_levels.csv`.
+
+The CSV files are training examples, not the live dashboard values. For a production deployment, replace the synthetic training examples with appropriately governed real facility data and validate the models with healthcare staff before operational use.
