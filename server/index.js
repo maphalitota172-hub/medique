@@ -36,9 +36,16 @@ const allowedOrigins = [
   'http://127.0.0.1:5179'
 ]
 
-if (process.env.CLIENT_ORIGIN) {
-  allowedOrigins.push(process.env.CLIENT_ORIGIN)
-}
+const configuredClientOrigins = [
+  process.env.CLIENT_ORIGIN,
+  process.env.CLIENT_ORIGINS
+]
+  .filter(Boolean)
+  .flatMap(value => value.split(','))
+  .map(origin => origin.trim().replace(/\/+$/, ''))
+  .filter(Boolean)
+
+allowedOrigins.push(...configuredClientOrigins)
 
 app.use(cors({
   origin(origin, callback) {

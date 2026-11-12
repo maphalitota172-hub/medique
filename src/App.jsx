@@ -15,19 +15,20 @@ import {
   eta,
   facName,
   medName
-} from './lib/store'
+} from './lib/store.js'
 
-import { FACILITIES, MEDICINES, SERVICES } from './lib/data'
-import { can } from './lib/security'
-import { validate } from './lib/chain'
+import { FACILITIES, MEDICINES, SERVICES } from './lib/data.js'
+import { can } from './lib/security.js'
+import { validate } from './lib/chain.js'
+import { apiUrl } from './lib/api.js'
 import {
   connectSepoliaWallet,
   readSepoliaAnchorStatus,
   anchorPendingBlocks,
   getSepoliaContractAddress
-} from './lib/ethereum'
-import { Header, Notice } from './ui'
-import Insights from './Insights'
+} from './lib/ethereum.js'
+import { Header, Notice } from './ui.jsx'
+import Insights from './Insights.jsx'
 
 const fmt = t => new Date(t).toLocaleString()
 
@@ -65,7 +66,7 @@ function StaffAccounts() {
 
     try {
       const response = await fetch(
-        'http://localhost:5000/api/auth/create-staff',
+        apiUrl('/api/auth/create-staff'),
         {
           method: 'POST',
           headers: {

@@ -1,11 +1,12 @@
 
 import { useSyncExternalStore } from 'react'
-import { FACILITIES, MEDICINES, seedStock } from './data'
-import { GENESIS, mine, sha256 } from './chain'
-import { DEFAULT_PERMS, can } from './security'
+import { FACILITIES, MEDICINES, seedStock } from './data.js'
+import { GENESIS, mine, sha256 } from './chain.js'
+import { DEFAULT_PERMS, can } from './security.js'
+import { apiUrl } from './api.js'
 
 const KEY = 'mediqueue:v1'
-const API = 'http://localhost:5000/api/state'
+const API = apiUrl('/api/state')
 
 const authHeaders = () => ({
   Authorization: `Bearer ${localStorage.getItem('mediqueue:token') || ''}`
@@ -48,6 +49,8 @@ const purge = s => {
 }
 
 const load = () => {
+  if (typeof localStorage === 'undefined') return fresh()
+
   try {
     const saved = JSON.parse(localStorage.getItem(KEY))
     if (saved) return purge({ ...fresh(), ...saved })
@@ -65,14 +68,16 @@ function notifySubscribers() {
   subs.forEach(listener => listener())
 }
 
-// Save the latest state to the browser and queue a MySQL save.
+// Save the latest state to the browser and queue a database save.
 export function set(patch) {
   state = { ...state, ...patch }
 
-  try {
-    localStorage.setItem(KEY, JSON.stringify(state))
-  } catch (error) {
-    console.error('Local storage save failed:', error)
+  if (typeof localStorage !== 'undefined') {
+    try {
+      localStorage.setItem(KEY, JSON.stringify(state))
+    } catch (error) {
+      console.error('Local storage save failed:', error)
+    }
   }
 
   if (databaseReady) {
@@ -110,7 +115,7 @@ function saveToDatabase() {
       )
     }
 
-    console.log('MediQueue data successfully saved to MySQL.')
+    console.log('MediQueue data successfully saved to the database.')
     return true
   })
 
@@ -126,7 +131,9 @@ export async function initializeDatabase() {
     saveTimer = null
   }
 
-  const token = localStorage.getItem('mediqueue:token')
+  const token = typeof localStorage === 'undefined'
+    ? ''
+    : localStorage.getItem('mediqueue:token')
 
   if (!token) {
     throw new Error('Please sign in before connecting to the database.')
@@ -150,7 +157,9 @@ export async function initializeDatabase() {
         ...data.state
       })
 
-      localStorage.setItem(KEY, JSON.stringify(state))
+      if (typeof localStorage !== 'undefined') {
+        localStorage.setItem(KEY, JSON.stringify(state))
+      }
       notifySubscribers()
     } else {
       // First initialisation: save existing local state.

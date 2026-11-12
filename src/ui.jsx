@@ -1,5 +1,5 @@
-import { useStore, setRole } from './lib/store'
-import { ROLES } from './lib/security'
+import { useStore, setRole } from './lib/store.js'
+import { ROLES } from './lib/security.js'
 
 export const Header = ({ title, children, user, onLogout }) => (
   <header className="top">

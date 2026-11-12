@@ -1,6 +1,6 @@
-import { useStore, setPerm, setConfig, resetAll } from './lib/store'
-import { MODULES, ROLES, LEVELS, can, DATA_CLASSIFICATION, GDPR_CHECKS, gdprScore } from './lib/security'
-import { Header, Tile } from './ui'
+import { useStore, setPerm, setConfig, resetAll } from './lib/store.js'
+import { MODULES, ROLES, LEVELS, can, DATA_CLASSIFICATION, GDPR_CHECKS, gdprScore } from './lib/security.js'
+import { Header, Tile } from './ui.jsx'
 
 export default function Security() {
   const s = useStore()

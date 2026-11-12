@@ -3,11 +3,11 @@ import {
   BarChart, Bar, LineChart, Line, XAxis, YAxis, Tooltip,
   Legend, CartesianGrid, ResponsiveContainer
 } from 'recharts'
-import * as ai from './lib/ai'
-import { FACILITIES, MEDICINES, SERVICES } from './lib/data'
-import { useStore, waiting } from './lib/store'
-import { can } from './lib/security'
-import { Tile } from './ui'
+import * as ai from './lib/ai.js'
+import { FACILITIES, MEDICINES, SERVICES } from './lib/data.js'
+import { useStore, waiting } from './lib/store.js'
+import { can } from './lib/security.js'
+import { Tile } from './ui.jsx'
 
 const load = async name => {
   const response = await fetch(`/data/${name}.csv`)

@@ -1,8 +1,7 @@
 
 import { useState } from 'react'
-import { initializeDatabase } from './lib/store'
-
-const API = 'http://localhost:5000/api'
+import { apiUrl } from './lib/api.js'
+import { initializeDatabase } from './lib/store.js'
 
 export default function Auth({ onAuthenticated }) {
   const [mode, setMode] = useState('login')
@@ -32,7 +31,7 @@ export default function Auth({ onAuthenticated }) {
 
     try {
       const response = await fetch(
-        `${API}/auth/${mode === 'login' ? 'login' : 'register'}`,
+        apiUrl(`/api/auth/${mode === 'login' ? 'login' : 'register'}`),
         {
           method: 'POST',
           headers: {
@@ -48,7 +47,7 @@ export default function Auth({ onAuthenticated }) {
         throw new Error(data.error || 'Authentication failed.')
       }
 
-      // Save token before connecting to MySQL.
+      // Save the token before loading shared application data.
       localStorage.setItem('mediqueue:token', data.token)
 
       // Load shared application data using the new token.

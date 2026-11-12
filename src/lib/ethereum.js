@@ -6,7 +6,11 @@ import {
 export const SEPOLIA_CHAIN_ID = 11155111n
 export const SEPOLIA_CHAIN_HEX = '0xaa36a7'
 
-const CONTRACT_ADDRESS = import.meta.env.VITE_ETHEREUM_CONTRACT_ADDRESS || ''
+const CONTRACT_ADDRESS = (
+  typeof import.meta !== 'undefined' &&
+  import.meta.env &&
+  import.meta.env.VITE_ETHEREUM_CONTRACT_ADDRESS
+) || ''
 
 export const MEDIQUEUE_ANCHOR_ABI = [
   'function owner() view returns (address)',
@@ -30,6 +34,10 @@ function looksLikeTrust(p) {
 }
 
 function discoverEip6963(timeoutMs = 400) {
+  if (typeof window === 'undefined') {
+    return Promise.resolve([])
+  }
+
   return new Promise(resolve => {
     const found = []
     const onAnnounce = event => {
